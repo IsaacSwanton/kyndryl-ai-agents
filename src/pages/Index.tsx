@@ -18,7 +18,7 @@ const Index = () => {
             Your AI-Powered Co-design Squad
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Experience next-generation AI-powered voice interactions built for enterprise
+            Utilising curated data sources, Kyndryl Institute thought leadership and our understanding of you to support your journery
           </p>
         </div>
 
