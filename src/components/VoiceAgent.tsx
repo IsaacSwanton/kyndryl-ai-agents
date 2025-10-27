@@ -99,133 +99,50 @@ const VoiceAgent = ({ agentId, agentName, agentBio }: VoiceAgentProps) => {
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="relative w-64 h-64 flex items-center justify-center">
-        {/* Outer pulsing orbs */}
+        {/* Outer glow effect when speaking */}
         {isConnected && isSpeaking && (
-          <>
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-white opacity-10 animate-ping"
-                style={{
-                  inset: `${i * 20}px`,
-                  animationDuration: `${2 + i * 0.5}s`,
-                  animationDelay: `${i * 0.2}s`,
-                }}
-              />
-            ))}
-          </>
+          <div
+            className="absolute inset-0 rounded-full bg-white/20 animate-pulse blur-2xl"
+            style={{ animationDuration: '1.5s' }}
+          />
         )}
         
-        {/* Hexagonal particles */}
-        {isConnected && isSpeaking && (
-          <div className="absolute inset-0">
-            {[...Array(12)].map((_, i) => {
-              const angle = (i * 30) * Math.PI / 180;
-              const radius = 100;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-              return (
+        {/* Main sound wave bubble */}
+        <div
+          className={`relative rounded-full transition-all duration-500 flex items-center justify-center ${
+            isConnected
+              ? isSpeaking
+                ? "w-48 h-48 bg-white shadow-[0_0_60px_rgba(255,255,255,0.8)]"
+                : "w-44 h-44 bg-white/90 shadow-[0_0_30px_rgba(255,255,255,0.4)]"
+              : "w-40 h-40 bg-white/60"
+          }`}
+        >
+          {/* Sound wave bars */}
+          {isConnected && (
+            <div className="absolute inset-0 flex items-center justify-center gap-1.5">
+              {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="absolute w-2 h-2 bg-white rounded-full animate-pulse"
+                  className={`w-1.5 bg-primary rounded-full transition-all ${
+                    isSpeaking ? 'animate-pulse' : ''
+                  }`}
                   style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: `translate(${x}px, ${y}px)`,
-                    animationDuration: `${1 + (i % 3) * 0.3}s`,
-                    animationDelay: `${i * 0.1}s`,
-                    opacity: 0.6,
+                    height: isSpeaking 
+                      ? `${30 + Math.abs(2 - i) * 15}%` 
+                      : '20%',
+                    animationDuration: `${0.6 + i * 0.1}s`,
+                    animationDelay: `${i * 0.05}s`,
                   }}
                 />
-              );
-            })}
-          </div>
-        )}
-        
-        {/* Main circular visualization with layered rings */}
-        <div className="relative w-44 h-44 rounded-full flex items-center justify-center">
-          {/* Outer glowing ring */}
-          <div
-            className={`absolute inset-0 rounded-full border-4 transition-all duration-500 ${
-              isConnected
-                ? isSpeaking
-                  ? "border-white scale-110 animate-pulse shadow-[0_0_50px_rgba(255,255,255,0.8)]"
-                  : "border-white/50 scale-100"
-                : "border-white/20 scale-95"
-            }`}
-          />
-          
-          {/* Middle rotating ring */}
-          {isConnected && (
-            <div
-              className={`absolute inset-4 rounded-full border-2 border-dashed border-white transition-opacity ${
-                isSpeaking ? 'opacity-100 animate-spin' : 'opacity-30'
-              }`}
-              style={{ animationDuration: '4s' }}
-            />
+              ))}
+            </div>
           )}
           
-          {/* Inner core with radial bars */}
-          <div
-            className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${
-              isConnected
-                ? isSpeaking
-                  ? "bg-white shadow-[0_0_40px_rgba(255,255,255,0.9)] scale-105"
-                  : "bg-white/90 scale-100"
-                : "bg-white/30 scale-90"
-            }`}
-          >
-            {/* Radial animated bars */}
-            {isConnected && isSpeaking && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                {[...Array(8)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-1 bg-primary rounded-full"
-                    style={{
-                      height: `${40 + Math.sin(Date.now() / 150 + i * 0.8) * 25}%`,
-                      transform: `rotate(${i * 45}deg) translateY(-50%)`,
-                      transformOrigin: 'center',
-                      top: '50%',
-                      left: '50%',
-                      animation: `pulse ${0.8 + i * 0.1}s ease-in-out infinite`,
-                      animationDelay: `${i * 0.1}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-            
-            {/* Center icon */}
-            <div className="relative z-10">
-              {isInitializing ? (
-                <Loader2 className="w-12 h-12 text-primary animate-spin" />
-              ) : isConnected ? (
-                <Mic
-                  className={`w-12 h-12 text-primary transition-all duration-300 ${
-                    isSpeaking ? "scale-75 opacity-40" : "scale-100 opacity-100"
-                  }`}
-                />
-              ) : (
-                <MicOff className="w-12 h-12 text-white/60" />
-              )}
-            </div>
-          </div>
+          {/* Loading state */}
+          {isInitializing && (
+            <Loader2 className="w-12 h-12 text-primary animate-spin" />
+          )}
         </div>
-
-        {/* Orbital rings */}
-        {isConnected && isSpeaking && (
-          <>
-            <div
-              className="absolute inset-0 rounded-full border border-white/30 animate-spin"
-              style={{ animationDuration: '8s' }}
-            />
-            <div
-              className="absolute inset-6 rounded-full border border-white/20 animate-spin"
-              style={{ animationDuration: '6s', animationDirection: 'reverse' }}
-            />
-          </>
-        )}
       </div>
 
       <div className="text-center space-y-2">
