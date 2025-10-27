@@ -18,7 +18,7 @@ const Index = () => {
             Your AI-Powered Co-design Squad
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Utilising curated data sources, Kyndryl Institute thought leadership and our understanding of you to support your journery
+            Utilising curated data sources, Kyndryl Institute thought leadership and our understanding of you to support your journey
           </p>
         </div>
 
