@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { ScrollArea } from "./ui/scroll-area";
 import { Plus, Trash2 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 
@@ -64,14 +65,15 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl shadow-glow border-border">
-        <CardHeader>
+      <Card className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-glow border-border">
+        <CardHeader className="flex-shrink-0">
           <CardTitle className="text-2xl">Agent Configuration</CardTitle>
           <CardDescription>
             Add and manage your ElevenLabs agents
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <ScrollArea className="flex-1 px-6">
+          <div className="space-y-6 pb-6">
           <div className="space-y-4">
             <div className="grid gap-4">
               <div className="space-y-2">
@@ -152,14 +154,15 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
             )}
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button
-              onClick={onClose}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
-            >
-              Done
-            </Button>
           </div>
+        </ScrollArea>
+        <CardContent className="flex-shrink-0 pt-4">
+          <Button
+            onClick={onClose}
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            Done
+          </Button>
         </CardContent>
       </Card>
     </div>
