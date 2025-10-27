@@ -8,41 +8,41 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 1% 24%;
+    --background: 7 100% 64%;
+    --foreground: 0 0% 100%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 1% 24%;
+    --card-foreground: 7 100% 64%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 1% 24%;
+    --popover-foreground: 7 100% 64%;
 
-    --primary: 7 100% 59%;
+    --primary: 7 100% 64%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 7 100% 70%;
 
-    --secondary: 169 40% 93%;
-    --secondary-foreground: 0 1% 24%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 7 100% 64%;
 
-    --muted: 45 11% 94%;
-    --muted-foreground: 29 10% 57%;
+    --muted: 7 100% 74%;
+    --muted-foreground: 0 0% 100%;
 
-    --accent: 143 68% 58%;
+    --accent: 7 100% 54%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 7 100% 59%;
+    --destructive: 7 100% 64%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 169 40% 93%;
-    --input: 169 40% 93%;
-    --ring: 7 100% 59%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
+    --ring: 7 100% 64%;
 
     --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(7, 100%, 59%), hsl(143, 68%, 58%));
-    --gradient-hero: linear-gradient(180deg, hsl(187, 50%, 32%), hsl(153, 79%, 8%));
-    --shadow-glow: 0 0 40px hsl(7 100% 59% / 0.4);
-    --shadow-card: 0 10px 30px -10px hsl(7 100% 59% / 0.2);
+    --gradient-primary: linear-gradient(135deg, hsl(7, 100%, 64%), hsl(7, 100%, 54%));
+    --gradient-hero: linear-gradient(180deg, hsl(7, 100%, 64%), hsl(7, 100%, 54%));
+    --shadow-glow: 0 0 40px hsl(7 100% 64% / 0.6);
+    --shadow-card: 0 10px 30px -10px hsl(7 100% 64% / 0.4);
 
     --sidebar-background: 0 0% 98%;
 
@@ -113,5 +113,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Everett', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
