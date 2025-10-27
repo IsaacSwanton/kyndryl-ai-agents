@@ -70,23 +70,23 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
           <div className="space-y-4">
             <div className="grid gap-4">
               <div className="space-y-2">
-                <Label htmlFor="agentName">Agent Name</Label>
+                <Label htmlFor="agentName" className="text-card-foreground">Agent Name</Label>
                 <Input
                   id="agentName"
                   placeholder="e.g., Customer Support Agent"
                   value={newAgentName}
                   onChange={(e) => setNewAgentName(e.target.value)}
-                  className="border-input"
+                  className="border-input bg-white text-gray-900 placeholder:text-gray-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="agentId">ElevenLabs Agent ID</Label>
+                <Label htmlFor="agentId" className="text-card-foreground">ElevenLabs Agent ID</Label>
                 <Input
                   id="agentId"
                   placeholder="e.g., agent_3701k83..."
                   value={newAgentId}
                   onChange={(e) => setNewAgentId(e.target.value)}
-                  className="border-input"
+                  className="border-input bg-white text-gray-900 placeholder:text-gray-500"
                 />
               </div>
             </div>
