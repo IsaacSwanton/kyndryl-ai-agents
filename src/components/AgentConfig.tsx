@@ -5,7 +5,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Pencil } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 
 export interface Agent {
@@ -26,33 +26,68 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
   const [newAgentName, setNewAgentName] = useState("");
   const [newAgentId, setNewAgentId] = useState("");
   const [newAgentBio, setNewAgentBio] = useState("");
+  const [editingAgentId, setEditingAgentId] = useState<string | null>(null);
 
-  const addAgent = () => {
+  const addOrUpdateAgent = () => {
     if (!newAgentName.trim() || !newAgentId.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please provide agent name, ID, and bio",
+        description: "Please provide agent name and ID",
         variant: "destructive",
       });
       return;
     }
 
-    const newAgent: Agent = {
-      id: Date.now().toString(),
-      name: newAgentName.trim(),
-      agentId: newAgentId.trim(),
-      bio: newAgentBio.trim(),
-    };
+    if (editingAgentId) {
+      // Update existing agent
+      const updatedAgents = agents.map((agent) =>
+        agent.id === editingAgentId
+          ? {
+              ...agent,
+              name: newAgentName.trim(),
+              agentId: newAgentId.trim(),
+              bio: newAgentBio.trim(),
+            }
+          : agent
+      );
+      onAgentsChange(updatedAgents);
+      toast({
+        title: "Agent Updated",
+        description: `${newAgentName} has been updated successfully`,
+      });
+    } else {
+      // Add new agent
+      const newAgent: Agent = {
+        id: Date.now().toString(),
+        name: newAgentName.trim(),
+        agentId: newAgentId.trim(),
+        bio: newAgentBio.trim(),
+      };
+      onAgentsChange([...agents, newAgent]);
+      toast({
+        title: "Agent Added",
+        description: `${newAgentName} has been added successfully`,
+      });
+    }
 
-    onAgentsChange([...agents, newAgent]);
     setNewAgentName("");
     setNewAgentId("");
     setNewAgentBio("");
-    
-    toast({
-      title: "Agent Added",
-      description: `${newAgentName} has been added successfully`,
-    });
+    setEditingAgentId(null);
+  };
+
+  const editAgent = (agent: Agent) => {
+    setNewAgentName(agent.name);
+    setNewAgentId(agent.agentId);
+    setNewAgentBio(agent.bio);
+    setEditingAgentId(agent.id);
+  };
+
+  const cancelEdit = () => {
+    setNewAgentName("");
+    setNewAgentId("");
+    setNewAgentBio("");
+    setEditingAgentId(null);
   };
 
   const removeAgent = (id: string) => {
@@ -107,13 +142,24 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
                 />
               </div>
             </div>
-            <Button
-              onClick={addAgent}
-              className="w-full bg-gradient-primary hover:opacity-90 text-primary-foreground"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Agent
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={addOrUpdateAgent}
+                className="flex-1 bg-gradient-primary hover:opacity-90 text-primary-foreground"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {editingAgentId ? "Update Agent" : "Add Agent"}
+              </Button>
+              {editingAgentId && (
+                <Button
+                  onClick={cancelEdit}
+                  variant="outline"
+                  className="px-4"
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -140,14 +186,24 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
                         </p>
                       )}
                     </div>
-                    <Button
-                      onClick={() => removeAgent(agent.id)}
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        onClick={() => editAgent(agent)}
+                        variant="ghost"
+                        size="icon"
+                        className="text-primary hover:text-primary hover:bg-primary/10"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        onClick={() => removeAgent(agent.id)}
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
