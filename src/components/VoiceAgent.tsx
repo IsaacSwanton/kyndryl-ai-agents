@@ -7,9 +7,10 @@ import { useToast } from "./ui/use-toast";
 interface VoiceAgentProps {
   agentId: string;
   agentName: string;
+  agentBio?: string;
 }
 
-const VoiceAgent = ({ agentId, agentName }: VoiceAgentProps) => {
+const VoiceAgent = ({ agentId, agentName, agentBio }: VoiceAgentProps) => {
   const { toast } = useToast();
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
@@ -229,6 +230,11 @@ const VoiceAgent = ({ agentId, agentName }: VoiceAgentProps) => {
 
       <div className="text-center space-y-2">
         <h3 className="text-2xl font-bold text-white">{agentName}</h3>
+        {agentBio && (
+          <p className="text-white/90 text-base max-w-md mx-auto">
+            {agentBio}
+          </p>
+        )}
         <p className="text-white/80 text-lg">
           {isConnected
             ? isSpeaking

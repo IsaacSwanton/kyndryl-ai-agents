@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Plus, Trash2 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
@@ -10,6 +11,7 @@ export interface Agent {
   id: string;
   name: string;
   agentId: string;
+  bio: string;
 }
 
 interface AgentConfigProps {
@@ -22,12 +24,13 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
   const { toast } = useToast();
   const [newAgentName, setNewAgentName] = useState("");
   const [newAgentId, setNewAgentId] = useState("");
+  const [newAgentBio, setNewAgentBio] = useState("");
 
   const addAgent = () => {
     if (!newAgentName.trim() || !newAgentId.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please provide both agent name and ID",
+        description: "Please provide agent name, ID, and bio",
         variant: "destructive",
       });
       return;
@@ -37,11 +40,13 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
       id: Date.now().toString(),
       name: newAgentName.trim(),
       agentId: newAgentId.trim(),
+      bio: newAgentBio.trim(),
     };
 
     onAgentsChange([...agents, newAgent]);
     setNewAgentName("");
     setNewAgentId("");
+    setNewAgentBio("");
     
     toast({
       title: "Agent Added",
@@ -89,6 +94,16 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
                   className="border-input bg-white text-gray-900 placeholder:text-gray-500"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="agentBio" className="text-card-foreground">Agent Bio</Label>
+                <Textarea
+                  id="agentBio"
+                  placeholder="Brief description of the agent..."
+                  value={newAgentBio}
+                  onChange={(e) => setNewAgentBio(e.target.value)}
+                  className="border-input bg-white text-gray-900 placeholder:text-gray-500 min-h-[100px]"
+                />
+              </div>
             </div>
             <Button
               onClick={addAgent}
@@ -112,11 +127,16 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
                     key={agent.id}
                     className="flex items-center justify-between p-3 border border-border rounded-lg bg-card"
                   >
-                    <div>
+                    <div className="flex-1">
                       <p className="font-medium text-card-foreground">{agent.name}</p>
                       <p className="text-sm text-muted-foreground font-mono">
                         {agent.agentId}
                       </p>
+                      {agent.bio && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {agent.bio}
+                        </p>
+                      )}
                     </div>
                     <Button
                       onClick={() => removeAgent(agent.id)}
