@@ -97,34 +97,78 @@ const VoiceAgent = ({ agentId, agentName }: VoiceAgentProps) => {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="relative">
+      <div className="relative w-48 h-48 flex items-center justify-center">
+        {/* Outer ripple rings */}
+        {isConnected && isSpeaking && (
+          <>
+            <div className="absolute inset-0 rounded-full bg-primary opacity-20 animate-ping" style={{ animationDuration: '1.5s' }} />
+            <div className="absolute inset-4 rounded-full bg-accent opacity-20 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
+            <div className="absolute inset-8 rounded-full bg-primary-glow opacity-30 animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.6s' }} />
+          </>
+        )}
+        
+        {/* Main circular visualization */}
         <div
           className={`
-            w-32 h-32 rounded-full flex items-center justify-center
-            transition-all duration-500 ease-in-out
+            relative w-36 h-36 rounded-full flex items-center justify-center
+            transition-all duration-300 ease-out
             ${
               isConnected
                 ? isSpeaking
                   ? "bg-gradient-primary shadow-glow scale-110"
-                  : "bg-primary shadow-card"
-                : "bg-muted"
+                  : "bg-primary shadow-card scale-100"
+                : "bg-muted scale-95"
             }
           `}
         >
-          {isInitializing ? (
-            <Loader2 className="w-12 h-12 text-primary-foreground animate-spin" />
-          ) : isConnected ? (
-            <Mic
-              className={`w-12 h-12 text-primary-foreground transition-transform ${
-                isSpeaking ? "scale-125" : ""
-              }`}
-            />
-          ) : (
-            <MicOff className="w-12 h-12 text-muted-foreground" />
+          {/* Animated wave bars */}
+          {isConnected && isSpeaking && (
+            <div className="absolute inset-0 flex items-center justify-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-1 bg-primary-foreground rounded-full animate-pulse"
+                  style={{
+                    height: `${30 + Math.sin(Date.now() / 200 + i) * 20}%`,
+                    animationDuration: `${0.6 + i * 0.1}s`,
+                    animationDelay: `${i * 0.1}s`,
+                  }}
+                />
+              ))}
+            </div>
           )}
+          
+          {/* Center icon */}
+          <div className="relative z-10">
+            {isInitializing ? (
+              <Loader2 className="w-12 h-12 text-primary-foreground animate-spin" />
+            ) : isConnected ? (
+              <Mic
+                className={`w-12 h-12 text-primary-foreground transition-all duration-300 ${
+                  isSpeaking ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                }`}
+              />
+            ) : (
+              <MicOff className="w-12 h-12 text-muted-foreground" />
+            )}
+          </div>
         </div>
-        {isSpeaking && (
-          <div className="absolute inset-0 rounded-full bg-primary-glow opacity-50 animate-ping" />
+
+        {/* Rotating gradient ring */}
+        {isConnected && (
+          <div
+            className={`absolute inset-0 rounded-full transition-opacity duration-500 ${
+              isSpeaking ? 'opacity-100 animate-spin' : 'opacity-0'
+            }`}
+            style={{
+              background: 'conic-gradient(from 0deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--primary)) 100%)',
+              padding: '3px',
+              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              WebkitMaskComposite: 'xor',
+              maskComposite: 'exclude',
+              animationDuration: '3s',
+            }}
+          />
         )}
       </div>
 
