@@ -14,13 +14,9 @@ const Index = () => {
 
       <main className="container mx-auto px-4 pt-24 pb-12">
         <div className="text-center mb-16 space-y-4">
-          <h2 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
-            Intelligent Voice
-            <br />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Assistance
-            </span>
-          </h2>
+          <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
+            Your AI-Powered Co-design Squad
+          </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Experience next-generation AI-powered voice interactions built for enterprise
           </p>
