@@ -64,7 +64,10 @@ const VoiceAgent = ({ agentId, agentName }: VoiceAgentProps) => {
 
     setIsInitializing(true);
     try {
-      await conversation.startSession({ agentId });
+      await conversation.startSession({ 
+        agentId,
+        connectionType: 'webrtc'
+      });
     } catch (error) {
       console.error("Failed to start conversation:", error);
       toast({
