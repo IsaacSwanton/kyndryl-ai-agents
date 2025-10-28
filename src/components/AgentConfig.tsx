@@ -152,8 +152,9 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
             Add and manage your ElevenLabs agents
           </CardDescription>
         </CardHeader>
-        <ScrollArea className="h-[60vh] px-6">
-          <div className="space-y-6 pb-6 pr-4">
+        <CardContent className="flex-1 overflow-hidden p-0">
+          <ScrollArea className="h-[calc(90vh-220px)] px-6">
+            <div className="space-y-6 py-6 pr-4">
           <div className="space-y-4">
             <div className="grid gap-4">
               <div className="space-y-2">
@@ -270,16 +271,17 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
             )}
           </div>
 
-          </div>
-        </ScrollArea>
-        <CardContent className="flex-shrink-0 pt-4">
+            </div>
+          </ScrollArea>
+        </CardContent>
+        <div className="flex-shrink-0 p-6 pt-0">
           <Button
             onClick={onClose}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Done
           </Button>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

@@ -110,12 +110,12 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm }: VoiceAgentProps)
         
         {/* Main sound wave bubble */}
         <div
-          className={`relative rounded-full transition-all duration-500 flex items-center justify-center ${
+          className={`relative rounded-full transition-all duration-500 flex items-center justify-center shadow-2xl ${
             isConnected
               ? isSpeaking
                 ? "w-48 h-48 bg-white shadow-[0_0_60px_rgba(255,255,255,0.8)]"
                 : "w-44 h-44 bg-white/90 shadow-[0_0_30px_rgba(255,255,255,0.4)]"
-              : "w-40 h-40 bg-black"
+              : "w-40 h-40 bg-[#000000]"
           }`}
         >
           {/* Person icon when not connected */}
