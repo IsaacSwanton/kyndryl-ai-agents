@@ -1,13 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import VoiceAgent from "@/components/VoiceAgent";
 import AgentConfig, { Agent } from "@/components/AgentConfig";
 import { Button } from "@/components/ui/button";
 import backgroundImage from "@/assets/kyndryl-background.png";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [showConfig, setShowConfig] = useState(false);
   const [agents, setAgents] = useState<Agent[]>([]);
+  const { toast } = useToast();
+
+  // Load agents from database on mount
+  useEffect(() => {
+    loadAgents();
+  }, []);
+
+  const loadAgents = async () => {
+    const { data, error } = await supabase
+      .from('agents')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      toast({
+        title: "Error loading agents",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (data) {
+      setAgents(data.map(agent => ({
+        id: agent.id,
+        name: agent.name,
+        agentId: agent.agent_id,
+        bio: agent.bio || "",
+        llm: agent.llm || "",
+      })));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${backgroundImage})` }}>
@@ -61,6 +95,7 @@ const Index = () => {
           agents={agents}
           onAgentsChange={setAgents}
           onClose={() => setShowConfig(false)}
+          onRefresh={loadAgents}
         />
       )}
     </div>

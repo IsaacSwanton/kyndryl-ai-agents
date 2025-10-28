@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { ScrollArea } from "./ui/scroll-area";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import { useToast } from "./ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Agent {
   id: string;
@@ -20,9 +21,10 @@ interface AgentConfigProps {
   agents: Agent[];
   onAgentsChange: (agents: Agent[]) => void;
   onClose: () => void;
+  onRefresh: () => void;
 }
 
-const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
+const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfigProps) => {
   const { toast } = useToast();
   const [newAgentName, setNewAgentName] = useState("");
   const [newAgentId, setNewAgentId] = useState("");
@@ -30,7 +32,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
   const [newAgentLlm, setNewAgentLlm] = useState("");
   const [editingAgentId, setEditingAgentId] = useState<string | null>(null);
 
-  const addOrUpdateAgent = () => {
+  const addOrUpdateAgent = async () => {
     if (!newAgentName.trim() || !newAgentId.trim()) {
       toast({
         title: "Missing Information",
@@ -41,33 +43,50 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
     }
 
     if (editingAgentId) {
-      // Update existing agent
-      const updatedAgents = agents.map((agent) =>
-        agent.id === editingAgentId
-          ? {
-              ...agent,
-              name: newAgentName.trim(),
-              agentId: newAgentId.trim(),
-              bio: newAgentBio.trim(),
-              llm: newAgentLlm.trim(),
-            }
-          : agent
-      );
-      onAgentsChange(updatedAgents);
+      // Update existing agent in database
+      const { error } = await supabase
+        .from('agents')
+        .update({
+          name: newAgentName.trim(),
+          agent_id: newAgentId.trim(),
+          bio: newAgentBio.trim(),
+          llm: newAgentLlm.trim() || null,
+        })
+        .eq('id', editingAgentId);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Agent Updated",
         description: `${newAgentName} has been updated successfully`,
       });
     } else {
-      // Add new agent
-      const newAgent: Agent = {
-        id: Date.now().toString(),
-        name: newAgentName.trim(),
-        agentId: newAgentId.trim(),
-        bio: newAgentBio.trim(),
-        llm: newAgentLlm.trim(),
-      };
-      onAgentsChange([...agents, newAgent]);
+      // Add new agent to database
+      const { error } = await supabase
+        .from('agents')
+        .insert({
+          name: newAgentName.trim(),
+          agent_id: newAgentId.trim(),
+          bio: newAgentBio.trim(),
+          llm: newAgentLlm.trim() || null,
+        });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Agent Added",
         description: `${newAgentName} has been added successfully`,
@@ -79,6 +98,9 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
     setNewAgentBio("");
     setNewAgentLlm("");
     setEditingAgentId(null);
+    
+    // Refresh the agents list
+    onRefresh();
   };
 
   const editAgent = (agent: Agent) => {
@@ -97,12 +119,28 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
     setEditingAgentId(null);
   };
 
-  const removeAgent = (id: string) => {
-    onAgentsChange(agents.filter((agent) => agent.id !== id));
+  const removeAgent = async (id: string) => {
+    const { error } = await supabase
+      .from('agents')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Agent Removed",
       description: "Agent has been removed from the list",
     });
+    
+    // Refresh the agents list
+    onRefresh();
   };
 
   return (
