@@ -8,6 +8,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 
 export interface Agent {
   id: string;
@@ -16,6 +17,29 @@ export interface Agent {
   bio: string;
   llm?: string;
 }
+
+const agentSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Agent name is required")
+    .max(100, "Agent name must be less than 100 characters"),
+  agentId: z.string()
+    .trim()
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "Agent ID can only contain letters, numbers, hyphens, and underscores"
+    )
+    .min(3, "Agent ID must be at least 3 characters")
+    .max(100, "Agent ID must be less than 100 characters"),
+  bio: z.string()
+    .trim()
+    .max(1000, "Bio must be less than 1000 characters")
+    .optional(),
+  llm: z.string()
+    .trim()
+    .max(100, "LLM model name must be less than 100 characters")
+    .optional()
+});
 
 interface AgentConfigProps {
   agents: Agent[];
@@ -33,24 +57,34 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
   const [editingAgentId, setEditingAgentId] = useState<string | null>(null);
 
   const addOrUpdateAgent = async () => {
-    if (!newAgentName.trim() || !newAgentId.trim()) {
+    // Validate input
+    const validationResult = agentSchema.safeParse({
+      name: newAgentName,
+      agentId: newAgentId,
+      bio: newAgentBio || undefined,
+      llm: newAgentLlm || undefined
+    });
+
+    if (!validationResult.success) {
       toast({
-        title: "Missing Information",
-        description: "Please provide agent name and ID",
+        title: "Invalid Input",
+        description: validationResult.error.errors[0].message,
         variant: "destructive",
       });
       return;
     }
+
+    const validatedData = validationResult.data;
 
     if (editingAgentId) {
       // Update existing agent in database
       const { error } = await supabase
         .from('agents')
         .update({
-          name: newAgentName.trim(),
-          agent_id: newAgentId.trim(),
-          bio: newAgentBio.trim(),
-          llm: newAgentLlm.trim() || null,
+          name: validatedData.name,
+          agent_id: validatedData.agentId,
+          bio: validatedData.bio || null,
+          llm: validatedData.llm || null,
         })
         .eq('id', editingAgentId);
 
@@ -65,17 +99,17 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
 
       toast({
         title: "Agent Updated",
-        description: `${newAgentName} has been updated successfully`,
+        description: `${validatedData.name} has been updated successfully`,
       });
     } else {
       // Add new agent to database
       const { error } = await supabase
         .from('agents')
         .insert({
-          name: newAgentName.trim(),
-          agent_id: newAgentId.trim(),
-          bio: newAgentBio.trim(),
-          llm: newAgentLlm.trim() || null,
+          name: validatedData.name,
+          agent_id: validatedData.agentId,
+          bio: validatedData.bio || null,
+          llm: validatedData.llm || null,
         });
 
       if (error) {
@@ -89,7 +123,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
 
       toast({
         title: "Agent Added",
-        description: `${newAgentName} has been added successfully`,
+        description: `${validatedData.name} has been added successfully`,
       });
     }
 
@@ -165,6 +199,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
                   value={newAgentName}
                   onChange={(e) => setNewAgentName(e.target.value)}
                   className="border-input bg-white text-gray-900 placeholder:text-gray-500"
+                  maxLength={100}
                 />
               </div>
               <div className="space-y-2">
@@ -175,6 +210,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
                   value={newAgentId}
                   onChange={(e) => setNewAgentId(e.target.value)}
                   className="border-input bg-white text-gray-900 placeholder:text-gray-500"
+                  maxLength={100}
                 />
               </div>
               <div className="space-y-2">
@@ -185,6 +221,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
                   value={newAgentBio}
                   onChange={(e) => setNewAgentBio(e.target.value)}
                   className="border-input bg-white text-gray-900 placeholder:text-gray-500 min-h-[100px]"
+                  maxLength={1000}
                 />
               </div>
               <div className="space-y-2">
@@ -195,6 +232,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
                   value={newAgentLlm}
                   onChange={(e) => setNewAgentLlm(e.target.value)}
                   className="border-input bg-white text-gray-900 placeholder:text-gray-500"
+                  maxLength={100}
                 />
               </div>
             </div>

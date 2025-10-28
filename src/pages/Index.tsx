@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import VoiceAgent from "@/components/VoiceAgent";
 import AgentConfig, { Agent } from "@/components/AgentConfig";
@@ -6,16 +7,42 @@ import { Button } from "@/components/ui/button";
 import backgroundImage from "@/assets/kyndryl-background.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { User } from "@supabase/supabase-js";
 
 const Index = () => {
   const [showConfig, setShowConfig] = useState(false);
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Check authentication
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   // Load agents from database on mount
   useEffect(() => {
-    loadAgents();
-  }, []);
+    if (user) {
+      loadAgents();
+    }
+  }, [user]);
 
   const loadAgents = async () => {
     const { data, error } = await supabase
@@ -43,9 +70,17 @@ const Index = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${backgroundImage})` }}>
-      <Header onConfigClick={() => setShowConfig(true)} />
+      <Header onConfigClick={() => setShowConfig(true)} userEmail={user?.email} />
 
       <main className="container mx-auto px-4 pt-24 pb-12">
         <div className="text-center mb-16 space-y-4">
