@@ -1,7 +1,7 @@
 import { useConversation } from "@11labs/react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Mic, MicOff, Loader2 } from "lucide-react";
+import { Mic, MicOff, Loader2, User } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 
 interface VoiceAgentProps {
@@ -115,9 +115,14 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm }: VoiceAgentProps)
               ? isSpeaking
                 ? "w-48 h-48 bg-white shadow-[0_0_60px_rgba(255,255,255,0.8)]"
                 : "w-44 h-44 bg-white/90 shadow-[0_0_30px_rgba(255,255,255,0.4)]"
-              : "w-40 h-40 bg-white/60"
+              : "w-40 h-40 bg-black"
           }`}
         >
+          {/* Person icon when not connected */}
+          {!isConnected && !isInitializing && (
+            <User className="w-16 h-16 text-white" strokeWidth={1.5} />
+          )}
+          
           {/* Sound wave bars */}
           {isConnected && (
             <div className="absolute inset-0 flex items-center justify-center gap-1.5">
