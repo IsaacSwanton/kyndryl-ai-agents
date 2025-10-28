@@ -114,7 +114,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
             Add and manage your ElevenLabs agents
           </CardDescription>
         </CardHeader>
-        <ScrollArea className="flex-1 px-6">
+        <ScrollArea className="flex-1 px-6 max-h-[60vh]">
           <div className="space-y-6 pb-6">
           <div className="space-y-4">
             <div className="grid gap-4">
