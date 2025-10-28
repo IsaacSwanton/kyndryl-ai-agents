@@ -13,6 +13,7 @@ export interface Agent {
   name: string;
   agentId: string;
   bio: string;
+  llm?: string;
 }
 
 interface AgentConfigProps {
@@ -26,6 +27,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
   const [newAgentName, setNewAgentName] = useState("");
   const [newAgentId, setNewAgentId] = useState("");
   const [newAgentBio, setNewAgentBio] = useState("");
+  const [newAgentLlm, setNewAgentLlm] = useState("");
   const [editingAgentId, setEditingAgentId] = useState<string | null>(null);
 
   const addOrUpdateAgent = () => {
@@ -47,6 +49,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
               name: newAgentName.trim(),
               agentId: newAgentId.trim(),
               bio: newAgentBio.trim(),
+              llm: newAgentLlm.trim(),
             }
           : agent
       );
@@ -62,6 +65,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
         name: newAgentName.trim(),
         agentId: newAgentId.trim(),
         bio: newAgentBio.trim(),
+        llm: newAgentLlm.trim(),
       };
       onAgentsChange([...agents, newAgent]);
       toast({
@@ -73,6 +77,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
     setNewAgentName("");
     setNewAgentId("");
     setNewAgentBio("");
+    setNewAgentLlm("");
     setEditingAgentId(null);
   };
 
@@ -80,6 +85,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
     setNewAgentName(agent.name);
     setNewAgentId(agent.agentId);
     setNewAgentBio(agent.bio);
+    setNewAgentLlm(agent.llm || "");
     setEditingAgentId(agent.id);
   };
 
@@ -87,6 +93,7 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
     setNewAgentName("");
     setNewAgentId("");
     setNewAgentBio("");
+    setNewAgentLlm("");
     setEditingAgentId(null);
   };
 
@@ -141,6 +148,16 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
                   className="border-input bg-white text-gray-900 placeholder:text-gray-500 min-h-[100px]"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="agentLlm" className="text-card-foreground">LLM Model</Label>
+                <Input
+                  id="agentLlm"
+                  placeholder="e.g., GPT-4, Claude 3.5, Gemini Pro"
+                  value={newAgentLlm}
+                  onChange={(e) => setNewAgentLlm(e.target.value)}
+                  className="border-input bg-white text-gray-900 placeholder:text-gray-500"
+                />
+              </div>
             </div>
             <div className="flex gap-2">
               <Button
@@ -183,6 +200,11 @@ const AgentConfig = ({ agents, onAgentsChange, onClose }: AgentConfigProps) => {
                       {agent.bio && (
                         <p className="text-sm text-muted-foreground mt-1">
                           {agent.bio}
+                        </p>
+                      )}
+                      {agent.llm && (
+                        <p className="text-sm text-muted-foreground mt-1 font-medium">
+                          LLM: {agent.llm}
                         </p>
                       )}
                     </div>

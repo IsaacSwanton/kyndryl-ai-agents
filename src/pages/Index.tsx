@@ -36,6 +36,7 @@ const Index = () => {
                     agentId={agent.agentId}
                     agentName={agent.name}
                     agentBio={agent.bio}
+                    agentLlm={agent.llm}
                   />
                 </div>
               ))}

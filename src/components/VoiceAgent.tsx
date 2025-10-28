@@ -8,9 +8,10 @@ interface VoiceAgentProps {
   agentId: string;
   agentName: string;
   agentBio?: string;
+  agentLlm?: string;
 }
 
-const VoiceAgent = ({ agentId, agentName, agentBio }: VoiceAgentProps) => {
+const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm }: VoiceAgentProps) => {
   const { toast } = useToast();
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
@@ -150,6 +151,11 @@ const VoiceAgent = ({ agentId, agentName, agentBio }: VoiceAgentProps) => {
         {agentBio && (
           <p className="text-white/90 text-base max-w-md mx-auto">
             {agentBio}
+          </p>
+        )}
+        {agentLlm && (
+          <p className="text-white/70 text-sm font-medium">
+            LLM: {agentLlm}
           </p>
         )}
         <p className="text-white/80 text-lg">
