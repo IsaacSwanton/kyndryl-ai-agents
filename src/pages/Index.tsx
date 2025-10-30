@@ -72,13 +72,18 @@ const Index = () => {
     }
   };
 
-  // Map agent names to avatar images
+  // Map agent names to avatar images (case-insensitive)
   const getAvatarImage = (agentName: string) => {
-    const avatarMap: Record<string, string> = {
-      "End Customer": endCustomerAvatar,
-      "AI Kyndryl consultant": aiKyndrylConsultantAvatar,
-    };
-    return avatarMap[agentName];
+    const normalizedName = agentName.toLowerCase().trim();
+    
+    if (normalizedName.includes("end customer")) {
+      return endCustomerAvatar;
+    }
+    if (normalizedName.includes("ai") && normalizedName.includes("kyndryl")) {
+      return aiKyndrylConsultantAvatar;
+    }
+    
+    return undefined;
   };
 
   if (loading) {
