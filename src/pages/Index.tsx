@@ -5,6 +5,7 @@ import VoiceAgent from "@/components/VoiceAgent";
 import AgentConfig, { Agent } from "@/components/AgentConfig";
 import { Button } from "@/components/ui/button";
 import backgroundImage from "@/assets/kyndryl-background.png";
+import endCustomerAvatar from "@/assets/end-customer-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
@@ -70,6 +71,14 @@ const Index = () => {
     }
   };
 
+  // Map agent names to avatar images
+  const getAvatarImage = (agentName: string) => {
+    const avatarMap: Record<string, string> = {
+      "End Customer": endCustomerAvatar,
+    };
+    return avatarMap[agentName];
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -107,6 +116,7 @@ const Index = () => {
                     agentName={agent.name}
                     agentBio={agent.bio}
                     agentLlm={agent.llm}
+                    avatarImage={getAvatarImage(agent.name)}
                   />
                 </div>
               ))}

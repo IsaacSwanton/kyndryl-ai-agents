@@ -9,9 +9,10 @@ interface VoiceAgentProps {
   agentName: string;
   agentBio?: string;
   agentLlm?: string;
+  avatarImage?: string;
 }
 
-const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm }: VoiceAgentProps) => {
+const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: VoiceAgentProps) => {
   const { toast } = useToast();
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
@@ -118,9 +119,17 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm }: VoiceAgentProps)
               : "w-40 h-40 bg-[#000000]"
           }`}
         >
-          {/* Person icon when not connected */}
+          {/* Avatar image or person icon when not connected */}
           {!isConnected && !isInitializing && (
-            <User className="w-16 h-16 text-white" strokeWidth={1.5} />
+            avatarImage ? (
+              <img 
+                src={avatarImage} 
+                alt={agentName}
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              <User className="w-16 h-16 text-white" strokeWidth={1.5} />
+            )
           )}
           
           {/* Sound wave bars */}
