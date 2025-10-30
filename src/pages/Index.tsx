@@ -6,6 +6,7 @@ import AgentConfig, { Agent } from "@/components/AgentConfig";
 import { Button } from "@/components/ui/button";
 import backgroundImage from "@/assets/kyndryl-background.png";
 import endCustomerAvatar from "@/assets/end-customer-avatar.png";
+import aiKyndrylConsultantAvatar from "@/assets/ai-kyndryl-consultant-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
@@ -75,6 +76,7 @@ const Index = () => {
   const getAvatarImage = (agentName: string) => {
     const avatarMap: Record<string, string> = {
       "End Customer": endCustomerAvatar,
+      "AI Kyndryl consultant": aiKyndrylConsultantAvatar,
     };
     return avatarMap[agentName];
   };
