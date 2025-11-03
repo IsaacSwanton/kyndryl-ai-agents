@@ -161,11 +161,11 @@ const Index = () => {
       <Header onConfigClick={() => setShowConfig(true)} userEmail={user?.email} />
 
       <main className="container mx-auto px-4 pt-24 pb-12">
-        <div className="text-center mb-16 space-y-4">
+        <div className="text-left mb-16 space-y-4">
           <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
             Your AI-Powered Co-design Squad
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl">
             Utilising curated data sources, Kyndryl Institute thought leadership and our understanding of you to support your journey
           </p>
         </div>
