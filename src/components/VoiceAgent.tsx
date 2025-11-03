@@ -162,7 +162,7 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: Voi
         </div>
       </div>
 
-      <div className="text-center space-y-2">
+      <div className="text-center space-y-2 min-h-[120px] flex flex-col justify-center">
         <h3 className="text-2xl font-bold text-white">{agentName}</h3>
         {agentBio && (
           <p className="text-white/90 text-base max-w-md mx-auto">
@@ -174,40 +174,40 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: Voi
             LLM: {agentLlm}
           </p>
         )}
-        <p className="text-white/80 text-lg">
-          {isConnected
-            ? isSpeaking
-              ? "Agent is speaking..."
-              : "Listening..."
-            : "Ready to connect"}
-        </p>
+        {isConnected && (
+          <p className="text-white/80 text-lg">
+            {isSpeaking ? "Agent is speaking..." : "Listening..."}
+          </p>
+        )}
       </div>
 
-      {!isConnected ? (
-        <Button
-          onClick={startConversation}
-          disabled={isInitializing}
-          size="lg"
-          className="bg-primary hover:bg-primary/90 text-white px-10 py-7 text-xl font-bold rounded-xl transition-all shadow-[0_10px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.4)] hover:scale-105"
-        >
-          {isInitializing ? (
-            <>
-              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-              Connecting...
-            </>
-          ) : (
-            "Start Conversation"
-          )}
-        </Button>
-      ) : (
-        <Button
-          onClick={stopConversation}
-          size="lg"
-          className="bg-white hover:bg-white/90 text-primary px-10 py-7 text-xl font-bold rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.3)]"
-        >
-          End Conversation
-        </Button>
-      )}
+      <div className="h-[72px] flex items-center">
+        {!isConnected ? (
+          <Button
+            onClick={startConversation}
+            disabled={isInitializing}
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-white px-10 py-7 text-xl font-bold rounded-xl transition-all shadow-[0_10px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.4)] hover:scale-105"
+          >
+            {isInitializing ? (
+              <>
+                <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              "Start Conversation"
+            )}
+          </Button>
+        ) : (
+          <Button
+            onClick={stopConversation}
+            size="lg"
+            className="bg-white hover:bg-white/90 text-primary px-10 py-7 text-xl font-bold rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.3)]"
+          >
+            End Conversation
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

@@ -41,13 +41,6 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Load agents from database on mount
-  useEffect(() => {
-    if (user) {
-      loadAgents();
-    }
-  }, [user]);
-
   const loadAgents = async () => {
     const { data, error } = await supabase
       .from('agents')
@@ -73,6 +66,13 @@ const Index = () => {
       })));
     }
   };
+
+  // Load agents from database on mount and when user changes
+  useEffect(() => {
+    if (user) {
+      loadAgents();
+    }
+  }, [user]);
 
   // Map agent names to avatar images (case-insensitive)
   const getAvatarImage = (agentName: string) => {
