@@ -41,7 +41,7 @@ const SortableAgentCard = ({
       ref={setNodeRef}
       style={{
         ...style,
-        animationDelay: `${index * 0.1}s`,
+        animationDelay: `${index * 0.2}s`,
       }}
       className="animate-fade-in bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_48px_rgba(0,0,0,0.4)] hover:border-white/30 transition-all duration-300 cursor-grab active:cursor-grabbing"
       {...attributes}
