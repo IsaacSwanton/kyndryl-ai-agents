@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import SortableAgentCard from "@/components/SortableAgentCard";
 import AgentConfig, { Agent } from "@/components/AgentConfig";
 import { Button } from "@/components/ui/button";
-import backgroundImage from "@/assets/kyndryl-background.png";
+
 import endCustomerAvatar from "@/assets/end-customer-avatar.png";
 import aiKyndrylConsultantAvatar from "@/assets/ai-kyndryl-consultant-avatar.png";
 import customerRelationshipManagerAvatar from "@/assets/customer-relationship-manager-avatar.png";
@@ -157,7 +157,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${backgroundImage})` }}>
+    <div className="min-h-screen bg-[#1a2332]">
       <Header onConfigClick={() => setShowConfig(true)} userEmail={user?.email} />
 
       <main className="container mx-auto px-4 pt-24 pb-12">
