@@ -19,6 +19,7 @@ export type Database = {
           agent_id: string
           bio: string | null
           created_at: string
+          display_order: number | null
           id: string
           llm: string | null
           name: string
@@ -27,6 +28,7 @@ export type Database = {
           agent_id: string
           bio?: string | null
           created_at?: string
+          display_order?: number | null
           id?: string
           llm?: string | null
           name: string
@@ -35,6 +37,7 @@ export type Database = {
           agent_id?: string
           bio?: string | null
           created_at?: string
+          display_order?: number | null
           id?: string
           llm?: string | null
           name?: string

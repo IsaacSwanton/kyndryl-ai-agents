@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { DndContext, closestCenter, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Header from "@/components/Header";
-import VoiceAgent from "@/components/VoiceAgent";
+import SortableAgentCard from "@/components/SortableAgentCard";
 import AgentConfig, { Agent } from "@/components/AgentConfig";
 import { Button } from "@/components/ui/button";
 import backgroundImage from "@/assets/kyndryl-background.png";
@@ -20,6 +22,14 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   // Check authentication
   useEffect(() => {
@@ -45,6 +55,7 @@ const Index = () => {
     const { data, error } = await supabase
       .from('agents')
       .select('*')
+      .order('display_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -94,6 +105,49 @@ const Index = () => {
     return undefined;
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex = agents.findIndex((agent) => agent.id === active.id);
+    const newIndex = agents.findIndex((agent) => agent.id === over.id);
+
+    const newAgents = arrayMove(agents, oldIndex, newIndex);
+    setAgents(newAgents);
+
+    // Update display_order in database
+    try {
+      const updates = newAgents.map((agent, index) => ({
+        id: agent.id,
+        display_order: index,
+      }));
+
+      for (const update of updates) {
+        await supabase
+          .from('agents')
+          .update({ display_order: update.display_order })
+          .eq('id', update.id);
+      }
+
+      toast({
+        title: "Order updated",
+        description: "Agent order has been saved",
+      });
+    } catch (error) {
+      console.error('Error updating agent order:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save agent order",
+        variant: "destructive",
+      });
+      // Reload agents on error
+      loadAgents();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -118,24 +172,33 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto">
           {agents.length > 0 ? (
-            <div className={`grid gap-8 ${
-              agents.length === 1 ? 'max-w-2xl mx-auto' :
-              agents.length === 2 ? 'md:grid-cols-2 max-w-5xl mx-auto' :
-              agents.length === 3 ? 'md:grid-cols-3' :
-              'md:grid-cols-2 lg:grid-cols-4'
-            }`}>
-              {agents.map((agent) => (
-                <div key={agent.id} className="bg-card/50 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-card">
-                  <VoiceAgent
-                    agentId={agent.agentId}
-                    agentName={agent.name}
-                    agentBio={agent.bio}
-                    agentLlm={agent.llm}
-                    avatarImage={getAvatarImage(agent.name)}
-                  />
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={agents.map(a => a.id)} strategy={verticalListSortingStrategy}>
+                <div className={`grid gap-8 ${
+                  agents.length === 1 ? 'max-w-2xl mx-auto' :
+                  agents.length === 2 ? 'md:grid-cols-2 max-w-5xl mx-auto' :
+                  agents.length === 3 ? 'md:grid-cols-3' :
+                  'md:grid-cols-2 lg:grid-cols-4'
+                }`}>
+                  {agents.map((agent, index) => (
+                    <SortableAgentCard
+                      key={agent.id}
+                      id={agent.id}
+                      agentId={agent.agentId}
+                      agentName={agent.name}
+                      agentBio={agent.bio}
+                      agentLlm={agent.llm}
+                      avatarImage={getAvatarImage(agent.name)}
+                      index={index}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           ) : (
             <div className="text-center py-16 space-y-4 max-w-2xl mx-auto">
               <p className="text-xl text-muted-foreground">No agents configured</p>
