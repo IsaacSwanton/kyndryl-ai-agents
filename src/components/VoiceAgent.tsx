@@ -99,8 +99,8 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: Voi
   const isSpeaking = conversation.isSpeaking;
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="relative w-64 h-64 flex items-center justify-center">
+    <div className="flex flex-col items-center gap-6 min-h-[600px]">
+      <div className="relative w-64 h-64 flex items-center justify-center flex-shrink-0">
         {/* Outer glow effect when speaking */}
         {isConnected && isSpeaking && (
           <div
@@ -162,7 +162,7 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: Voi
         </div>
       </div>
 
-      <div className="text-center space-y-2 min-h-[120px] flex flex-col justify-center">
+      <div className="text-center space-y-2 flex-1 flex flex-col justify-start">
         <h3 className="text-2xl font-bold text-white">{agentName}</h3>
         {agentBio && (
           <p className="text-white/90 text-base max-w-md mx-auto">
@@ -175,13 +175,13 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: Voi
           </p>
         )}
         {isConnected && (
-          <p className="text-white/80 text-lg">
+          <p className="text-white/80 text-lg mt-2">
             {isSpeaking ? "Agent is speaking..." : "Listening..."}
           </p>
         )}
       </div>
 
-      <div className="h-[72px] flex items-center">
+      <div className="flex items-center justify-center flex-shrink-0">
         {!isConnected ? (
           <Button
             onClick={startConversation}
