@@ -43,7 +43,7 @@ const SortableAgentCard = ({
         ...style,
         animationDelay: `${index * 0.2}s`,
       }}
-      className="animate-fade-in bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl border-t-4 border-primary transition-all duration-300 cursor-grab active:cursor-grabbing"
+      className="animate-fade-in bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:bg-white/15 hover:border-white/30 transition-all duration-300 cursor-grab active:cursor-grabbing"
       {...attributes}
       {...listeners}
     >
