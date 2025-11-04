@@ -169,11 +169,6 @@ const VoiceAgent = ({ agentId, agentName, agentBio, agentLlm, avatarImage }: Voi
             {agentBio}
           </p>
         )}
-        {agentLlm && (
-          <p className="text-white/70 text-sm font-medium">
-            LLM: {agentLlm}
-          </p>
-        )}
         {isConnected && (
           <p className="text-white/80 text-lg mt-2">
             {isSpeaking ? "Agent is speaking..." : "Listening..."}
