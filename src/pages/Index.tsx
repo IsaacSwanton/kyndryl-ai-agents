@@ -157,7 +157,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a2332]">
+    <div className="min-h-screen bg-[#3D3C3C]">
       <Header onConfigClick={() => setShowConfig(true)} userEmail={user?.email} />
 
       <main className="container mx-auto px-4 pt-24 pb-12">
