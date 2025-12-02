@@ -20,6 +20,7 @@ export type Database = {
           bio: string | null
           created_at: string
           display_order: number | null
+          hidden: boolean
           id: string
           llm: string | null
           name: string
@@ -29,6 +30,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_order?: number | null
+          hidden?: boolean
           id?: string
           llm?: string | null
           name: string
@@ -38,6 +40,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_order?: number | null
+          hidden?: boolean
           id?: string
           llm?: string | null
           name?: string

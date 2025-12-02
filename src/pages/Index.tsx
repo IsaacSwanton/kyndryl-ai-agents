@@ -56,6 +56,7 @@ const Index = () => {
     const { data, error } = await supabase
       .from('agents')
       .select('*')
+      .eq('hidden', false)
       .order('display_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: true });
 
@@ -77,6 +78,28 @@ const Index = () => {
         llm: agent.llm || "",
       })));
     }
+  };
+
+  const hideAgent = async (agentId: string) => {
+    const { error } = await supabase
+      .from('agents')
+      .update({ hidden: true })
+      .eq('id', agentId);
+
+    if (error) {
+      toast({
+        title: "Error hiding agent",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Agent hidden",
+      description: "You can restore it from the config panel",
+    });
+    loadAgents();
   };
 
   // Load agents from database on mount and when user changes
@@ -198,6 +221,7 @@ const Index = () => {
                       agentLlm={agent.llm}
                       avatarImage={getAvatarImage(agent.name)}
                       index={index}
+                      onHide={() => hideAgent(agent.id)}
                     />
                   ))}
                 </div>

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
-import { Plus, Trash2, Pencil } from "lucide-react";
+import { Plus, Trash2, Pencil, Eye } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -55,6 +55,51 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
   const [newAgentBio, setNewAgentBio] = useState("");
   const [newAgentLlm, setNewAgentLlm] = useState("");
   const [editingAgentId, setEditingAgentId] = useState<string | null>(null);
+  const [hiddenAgents, setHiddenAgents] = useState<Agent[]>([]);
+
+  const loadHiddenAgents = async () => {
+    const { data, error } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('hidden', true);
+
+    if (!error && data) {
+      setHiddenAgents(data.map(agent => ({
+        id: agent.id,
+        name: agent.name,
+        agentId: agent.agent_id,
+        bio: agent.bio || "",
+        llm: agent.llm || "",
+      })));
+    }
+  };
+
+  useEffect(() => {
+    loadHiddenAgents();
+  }, []);
+
+  const restoreAgent = async (agentId: string) => {
+    const { error } = await supabase
+      .from('agents')
+      .update({ hidden: false })
+      .eq('id', agentId);
+
+    if (error) {
+      toast({
+        title: "Error restoring agent",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Agent restored",
+      description: "Agent is now visible on the front screen",
+    });
+    loadHiddenAgents();
+    onRefresh();
+  };
 
   const addOrUpdateAgent = async () => {
     // Validate input
@@ -279,11 +324,6 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
                           {agent.bio}
                         </p>
                       )}
-                      {agent.llm && (
-                        <p className="text-sm text-muted-foreground mt-1 font-medium">
-                          LLM: {agent.llm}
-                        </p>
-                      )}
                     </div>
                     <div className="flex gap-1">
                       <Button
@@ -308,6 +348,35 @@ const AgentConfig = ({ agents, onAgentsChange, onClose, onRefresh }: AgentConfig
               </div>
             )}
           </div>
+
+          {hiddenAgents.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">Hidden Agents</h3>
+              <div className="space-y-2">
+                {hiddenAgents.map((agent) => (
+                  <div
+                    key={agent.id}
+                    className="flex items-center justify-between p-3 border border-border rounded-lg bg-card/50"
+                  >
+                    <div className="flex-1">
+                      <p className="font-medium text-card-foreground">{agent.name}</p>
+                      <p className="text-sm text-muted-foreground font-mono">
+                        {agent.agentId}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => restoreAgent(agent.id)}
+                      variant="ghost"
+                      size="icon"
+                      className="text-green-600 hover:text-green-600 hover:bg-green-600/10"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
             </div>
           </ScrollArea>
