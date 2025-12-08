@@ -12,6 +12,7 @@ import aiKyndrylConsultantAvatar from "@/assets/ai-kyndryl-consultant-avatar.png
 import customerRelationshipManagerAvatar from "@/assets/customer-relationship-manager-avatar.png";
 import ctoAvatar from "@/assets/cto-avatar.png";
 import serverSpecialistAvatar from "@/assets/server-specialist-avatar.png";
+import complianceOfficerAvatar from "@/assets/compliance-officer-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
@@ -127,6 +128,9 @@ const Index = () => {
     }
     if (normalizedName.includes("server") && normalizedName.includes("specialist")) {
       return serverSpecialistAvatar;
+    }
+    if (normalizedName.includes("compliance") && normalizedName.includes("officer")) {
+      return complianceOfficerAvatar;
     }
     
     return undefined;
